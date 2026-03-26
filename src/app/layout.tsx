@@ -3,8 +3,8 @@ import Nav from "@/components/nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Task Manager",
-  description: "Track tasks and follow-ups with your team managers",
+  title: "Notes Manager",
+  description: "Track notes and follow-ups organized by project",
 };
 
 export default function RootLayout({

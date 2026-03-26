@@ -7,16 +7,17 @@ export default function Nav() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/tasks", label: "Tasks" },
-    { href: "/managers", label: "Managers" },
+    { href: "/notes", label: "Notes" },
+    { href: "/projects", label: "Projects" },
+    { href: "/people", label: "People" },
   ];
 
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
-          <Link href="/tasks" className="text-lg font-bold text-gray-900">
-            Task Manager
+          <Link href="/notes" className="text-lg font-bold text-gray-900">
+            Notes Manager
           </Link>
           <div className="flex gap-1">
             {links.map((link) => (

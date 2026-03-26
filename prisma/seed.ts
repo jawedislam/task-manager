@@ -17,20 +17,21 @@ if (url.startsWith("file:") || url.endsWith(".db")) {
 const prisma = new PrismaClient({ adapter } as any);
 
 async function main() {
-  const count = await prisma.manager.count();
-  if (count > 0) {
-    console.log("Managers already seeded, skipping.");
+  const projectCount = await prisma.project.count();
+  if (projectCount > 0) {
+    console.log("Projects already seeded, skipping.");
     return;
   }
 
-  await prisma.manager.createMany({
+  await prisma.project.createMany({
     data: [
-      { name: "Alice Johnson", email: "alice@example.com" },
-      { name: "Bob Smith", email: "bob@example.com" },
-      { name: "Carol Davis", email: "carol@example.com" },
+      { name: "Project Alpha" },
+      { name: "Project Beta" },
+      { name: "Project Gamma" },
+      { name: "Project Delta" },
     ],
   });
-  console.log("Seeded 3 default managers.");
+  console.log("Seeded 4 default projects.");
 }
 
 main()
