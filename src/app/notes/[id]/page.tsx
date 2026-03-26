@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import StatusBadge from "@/components/status-badge";
 import NoteActions from "./note-actions";
+import AddComment from "./add-comment";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,11 @@ export default async function NoteDetailPage({ params }: Props) {
 
   const note = await prisma.note.findUnique({
     where: { id: noteId },
-    include: { project: true, person: true },
+    include: {
+      project: true,
+      person: true,
+      comments: { orderBy: { createdAt: "desc" } },
+    },
   });
 
   if (!note) notFound();
@@ -70,16 +75,7 @@ export default async function NoteDetailPage({ params }: Props) {
           </div>
         )}
 
-        {note.comment && (
-          <div className="mt-4">
-            <h2 className="text-sm font-medium text-gray-500">Comment</h2>
-            <p className="mt-1 text-gray-700 whitespace-pre-wrap">
-              {note.comment}
-            </p>
-          </div>
-        )}
-
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-4">
           <div>
             <h2 className="text-sm font-medium text-gray-500">Due Date</h2>
             <p
@@ -107,7 +103,42 @@ export default async function NoteDetailPage({ params }: Props) {
               {new Date(note.createdAt).toLocaleDateString()}
             </p>
           </div>
+          <div>
+            <h2 className="text-sm font-medium text-gray-500">Updated</h2>
+            <p className="mt-1 text-sm text-gray-900">
+              {new Date(note.updatedAt).toLocaleString()}
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="mt-6 bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Comments ({note.comments.length})
+        </h2>
+
+        <AddComment noteId={note.id} />
+
+        {note.comments.length > 0 ? (
+          <div className="mt-4 space-y-3">
+            {note.comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="flex gap-3 p-3 bg-gray-50 rounded-md"
+              >
+                <div className="flex-1">
+                  <p className="text-sm text-gray-700">{comment.text}</p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {new Date(comment.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-400">No comments yet.</p>
+        )}
       </div>
     </div>
   );

@@ -30,7 +30,6 @@ export default async function EditNotePage({ params }: Props) {
     dueDate: new Date(note.dueDate).toISOString().split("T")[0],
     halfOfDay: note.halfOfDay,
     status: note.status,
-    comment: note.comment,
     projectId: note.projectId,
     personId: note.personId,
   };

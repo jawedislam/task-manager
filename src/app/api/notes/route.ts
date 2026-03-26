@@ -54,17 +54,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid half of day" }, { status: 400 });
   }
 
+  const commentText = body.comment?.trim() || null;
+
   const note = await prisma.note.create({
     data: {
       title: body.title.trim(),
       description: body.description?.trim() || null,
       dueDate: new Date(body.dueDate),
       halfOfDay,
-      comment: body.comment?.trim() || null,
       projectId: parseInt(body.projectId),
       personId: body.personId ? parseInt(body.personId) : null,
+      ...(commentText ? { comments: { create: { text: commentText } } } : {}),
     },
-    include: { project: true, person: true },
+    include: { project: true, person: true, comments: { orderBy: { createdAt: "desc" } } },
   });
 
   return NextResponse.json(note, { status: 201 });

@@ -20,7 +20,6 @@ interface NoteData {
   dueDate: string;
   halfOfDay: string;
   status: string;
-  comment: string | null;
   projectId: number;
   personId: number | null;
 }
@@ -40,7 +39,6 @@ export default function NoteForm({ projects, people, note }: NoteFormProps) {
   const [dueDate, setDueDate] = useState(note?.dueDate ?? "");
   const [halfOfDay, setHalfOfDay] = useState(note?.halfOfDay ?? "FIRST_HALF");
   const [status, setStatus] = useState(note?.status ?? "OPEN");
-  const [comment, setComment] = useState(note?.comment ?? "");
   const [projectId, setProjectId] = useState<string>(
     note?.projectId?.toString() ?? ""
   );
@@ -62,7 +60,6 @@ export default function NoteForm({ projects, people, note }: NoteFormProps) {
         description: description || null,
         dueDate,
         halfOfDay,
-        comment: comment || null,
         projectId: projectId ? parseInt(projectId) : null,
         personId: personId ? parseInt(personId) : null,
       };
@@ -196,19 +193,6 @@ export default function NoteForm({ projects, people, note }: NoteFormProps) {
             </select>
           </div>
         )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Comment
-        </label>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows={2}
-          placeholder="Add a comment..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
       </div>
 
       <div className="flex gap-3 pt-2">

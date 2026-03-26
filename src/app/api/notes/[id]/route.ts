@@ -14,7 +14,7 @@ export async function GET(
 
   const note = await prisma.note.findUnique({
     where: { id: noteId },
-    include: { project: true, person: true },
+    include: { project: true, person: true, comments: { orderBy: { createdAt: "desc" } } },
   });
 
   if (!note) {
@@ -43,15 +43,20 @@ export async function PUT(
   if (body.dueDate !== undefined) data.dueDate = new Date(body.dueDate);
   if (body.halfOfDay !== undefined) data.halfOfDay = body.halfOfDay;
   if (body.status !== undefined) data.status = body.status;
-  if (body.comment !== undefined) data.comment = body.comment?.trim() || null;
   if (body.projectId !== undefined) data.projectId = parseInt(body.projectId);
   if (body.personId !== undefined) data.personId = body.personId ? parseInt(body.personId) : null;
 
   try {
+    // If a comment is provided, add it as a new comment entry
+    const commentText = body.comment?.trim();
+    if (commentText) {
+      await prisma.comment.create({ data: { text: commentText, noteId } });
+    }
+
     const note = await prisma.note.update({
       where: { id: noteId },
       data,
-      include: { project: true, person: true },
+      include: { project: true, person: true, comments: { orderBy: { createdAt: "desc" } } },
     });
     return NextResponse.json(note);
   } catch {
