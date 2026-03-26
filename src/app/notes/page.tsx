@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import NoteCard from "@/components/note-card";
 import NoteFilters from "@/components/note-filters";
+import QuickNoteForm from "@/components/quick-note-form";
 
 export const dynamic = "force-dynamic";
 
@@ -29,13 +29,14 @@ export default async function NotesPage({ searchParams }: Props) {
     where.dueDate = { gte: start, lte: end };
   }
 
-  const [notes, projects, counts] = await Promise.all([
+  const [notes, projects, people, counts] = await Promise.all([
     prisma.note.findMany({
       where,
       include: { project: true, person: true },
       orderBy: { dueDate: "asc" },
     }),
     prisma.project.findMany({ orderBy: { name: "asc" } }),
+    prisma.person.findMany({ orderBy: { name: "asc" } }),
     prisma.note.groupBy({
       by: ["status"],
       _count: true,
@@ -58,12 +59,10 @@ export default async function NotesPage({ searchParams }: Props) {
             {countMap.CLOSED ?? 0} closed
           </p>
         </div>
-        <Link
-          href="/notes/new"
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-        >
-          New Note
-        </Link>
+      </div>
+
+      <div className="mt-4">
+        <QuickNoteForm projects={projects} people={people} />
       </div>
 
       <div className="mt-4">
